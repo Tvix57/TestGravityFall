@@ -1,0 +1,23 @@
+{
+    "banana": 100,
+    "black-berry-dark": 200,
+    "black-berry-light": 300,
+    "black-cherry": 400,
+    "coconut": 500,
+    "green-apple": 600,
+    "green-grape": 700,
+    "lemon": 800,
+    "lime": 900,
+    "mushroom": -1000,
+    "orange": 1100,
+    "peach": 1200,
+    "pear": 1300,
+    "plum": 1400,
+    "raspberry": 1500,
+    "red-apple": 1600,
+    "red-cherry": 1700,
+    "red-grape": 1800,
+    "star-fruit": 1900,
+    "strawberry": 2000,
+    "watermelon": 2100
+}

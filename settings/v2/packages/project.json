@@ -1,0 +1,13 @@
+{
+  "__version__": "1.0.6",
+  "physics": {
+    "gravity": {
+      "y": -10
+    },
+    "collisionGroups": [],
+    "collisionMatrix": {
+      "0": 1,
+      "1": 0
+    }
+  }
+}
