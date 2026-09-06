@@ -5,11 +5,13 @@ export class FruitController {
     private _id: number;
     private _type: FruitType;
     private _score: string
+    private _acceleration: number
 
     constructor(modell: Fruit) {
         this._id = modell.id;
         this._type = modell.type;
         this._score= modell.score.toString();
+        this._acceleration = modell.acceleration;
     }
 
     get id(): number {
@@ -22,5 +24,9 @@ export class FruitController {
 
     get score(): string {
         return this._score;
+    }
+
+    get acceleration(): number {
+        return this._acceleration;
     }
 }

@@ -1,8 +1,10 @@
 import { Fruit } from "./Fruit";
-import { Root } from "./Root";
+import { IBalance } from "./Balance";
 
 export class Garden {
     private fallFruits: Map<number, Fruit> = new Map<number, Fruit>();
+
+    constructor(private balance: IBalance) {}
 
     public createRandomFruit() {
         let fruit = new Fruit();
@@ -12,16 +14,15 @@ export class Garden {
 
 
     public catchFruit(id: number) {
-        Root.Instance.gameContext.balance.add(this.fallFruits.get(id)?.score??0);
+        this.balance.add(this.fallFruits.get(id)?.score??0);
         this.removeFruit(id)
     }
-
 
     public removeFruit(id: number) {
         this.fallFruits.delete(id);
     }
 
-    public getScore(): number {
-        return Root.Instance.gameContext.balance.get();
+    public clear() {
+        this.fallFruits.clear();
     }
 }

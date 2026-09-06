@@ -80,6 +80,10 @@
     "__prefab": {
       "__id__": 3
     },
+    "scorePopup": {
+      "__uuid__": "894ef570-80da-40cc-aacc-d34746cbce42",
+      "__expectedType__": "cc.Prefab"
+    },
     "_id": ""
   },
   {

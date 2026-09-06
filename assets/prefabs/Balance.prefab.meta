@@ -1,0 +1,13 @@
+{
+  "ver": "1.1.50",
+  "importer": "prefab",
+  "imported": true,
+  "uuid": "5187472a-c574-4792-a376-e9a3d16b9565",
+  "files": [
+    ".json"
+  ],
+  "subMetas": {},
+  "userData": {
+    "syncNodeName": "Balance"
+  }
+}

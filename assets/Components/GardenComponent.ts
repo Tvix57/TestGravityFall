@@ -1,8 +1,8 @@
-import { _decorator, Collider2D, Component, Label, Prefab, instantiate, Contact2DType, IPhysics2DContact, NodePool, Node, BoxCollider2D, Widget, random, randomRange, randomRangeInt, RigidBody2D, Vec2 } from "cc";
+import { _decorator, Collider2D, Component, Prefab, instantiate, Contact2DType, IPhysics2DContact, NodePool, Node, BoxCollider2D, Widget, random, randomRange, randomRangeInt, RigidBody2D, Vec2 } from "cc";
 import { GardenController } from "../scipts/GardenConroller";
-import { Root } from "../scipts/Root";
+import { BucketComponent } from "./BucketComponent";
 import { FruitComponent } from "./FruitComponents";
-
+import { StopDialogComponent } from "./StopDialogComponent";
 
 const {ccclass, property} = _decorator;
 @ccclass('GardenComponent')
@@ -16,42 +16,66 @@ export class GardenComponent extends Component {
     @property(Prefab)
     fruit: Prefab = null
 
-    @property(Label)
-    scoreText: Label
-
-    @property(Label)
-    timeText: Label
-    
     @property(Node)
     bucket: Node
 
+    @property(Prefab)
+    stopDialog: Prefab = null
+
     private controller: GardenController;
     private pool: NodePool = new NodePool();
-    
+    private stopDialogComponent: StopDialogComponent;
+
     protected onLoad(): void {
         this.floor.on(Contact2DType.BEGIN_CONTACT, this.onBeginFloorContact, this);
         this.bucket.getComponent(BoxCollider2D).on(Contact2DType.BEGIN_CONTACT, this.onBeginBucketContact, this);
+
+        let dialogNode = instantiate(this.stopDialog);
+        this.node.addChild(dialogNode);
+        this.stopDialogComponent = dialogNode.getComponent(StopDialogComponent);
+        this.stopDialogComponent.showStart();
     }
-    
+
     protected onEnable(): void {
-        this.controller = new GardenController(Root.Instance.gameContext.garden);
-        this.scoreText.string = this.controller.getScore().toString();
-        this.schedule(this.createRandomFruit, 1);
+        this.controller = new GardenController(this);
     }
 
     protected onDisable(): void {
         this.floor.off(Contact2DType.BEGIN_CONTACT, this.onBeginFloorContact, this);
         this.bucket.getComponent(BoxCollider2D).off(Contact2DType.BEGIN_CONTACT, this.onBeginBucketContact, this);
-        this.unschedule(this.createRandomFruit);
+        this.controller.pauseTimer();
+        this.controller.dispose();
     }
 
-    private createRandomFruit() {
+    public beginRound(): void {
+        this.controller.resumeTimer();
+    }
+
+    public endRound(): void {
+        this.clearFruits();
+        this.bucket.getComponent(BucketComponent).clearScores();
+        this.controller.pauseTimer();
+        this.stopDialogComponent.showRestart();
+    }
+
+    private clearFruits(): void {
+        for (let node of this.ceil.children.slice()) {
+            if (node.getComponent(FruitComponent)) {
+                this.pool.put(node);
+            }
+        }
+    }
+
+    public spawnFruit(): void {
         let node = this.pool.size() > 0 ? this.pool.get() : instantiate(this.fruit);
-        
-        node.getComponent(FruitComponent).controller = this.controller.createRandomFruit();
+
+        let fruitController = this.controller.createRandomFruit();
+        node.getComponent(FruitComponent).controller = fruitController;
 
         let widget = node.getComponent(Widget);
-        node.getComponent(RigidBody2D).linearVelocity = new Vec2(0,0)
+        let rigidBody = node.getComponent(RigidBody2D);
+        rigidBody.linearVelocity = new Vec2(0,0)
+        rigidBody.gravityScale = fruitController.acceleration;
         this.ceil.addChild(node);
         widget.horizontalCenter = randomRange(-0.5, 0.5);
         widget.verticalCenter = randomRange(-0.4, 0.4);
@@ -64,8 +88,7 @@ export class GardenComponent extends Component {
     onBeginBucketContact(self: Collider2D, other: Collider2D, contact: IPhysics2DContact | null) {
         let fruit = other.node.getComponent(FruitComponent)
         this.controller.catchFruit(fruit.controller.id);
-        this.scoreText.string = this.controller.getScore().toString();
-        // fruit.showScore(() => {this.removeFruit(other.node);})
+        this.bucket.getComponent(BucketComponent).showScore(fruit.controller.score);
         this.removeFruit(other.node);
     }
 

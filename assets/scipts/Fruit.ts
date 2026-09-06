@@ -5,6 +5,7 @@ export class Fruit {
     public id: number;
     public type: FruitType;
     public score: number;
+    public acceleration: number;
 
     constructor() {
         this.id = Date.now();
@@ -13,5 +14,6 @@ export class Fruit {
         const randomKey = keys[Math.floor(Math.random() * keys.length)];
         this.type = FruitType[randomKey];
         this.score = Root.Instance.config.getFruitScore(this.type);
+        this.acceleration = Root.Instance.config.getFruitAcceleration(this.type);
     }
 } 
